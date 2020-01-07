@@ -2,29 +2,24 @@ package model
 
 import (
 	"fmt"
+	"errors"
 )
 
-type Address struct{
-	Id int `json:"id"`
-	Name string `json:"name"`
-}
-
 // 查询一个
-func GetOneAddress(id string) (Address, error) {
-	var mod Address
+func GetOneAddress(id string) (mod Address, err error) {
 
 	// Db.Unsafe() 就是可以结构体跟数据库字段 
 	// Get 只能查出一条
-	getErr := Db.Unsafe().Get(&mod, "select * from address where id = ?", id)
+	err = Db.Unsafe().Get(&mod, "select * from address where id = ?", id)
 
-	if getErr != nil {
-		fmt.Println("数据库Get 错误 => ", getErr)
-		return mod, getErr
+	if err != nil {
+		fmt.Println("数据库Get 错误 => ", err)
+		return mod, err
 	}
 
 	fmt.Println("数据库Get => ", &mod)
 
-	return mod, getErr
+	return mod, err
 }
 
 // 查询全部
@@ -36,10 +31,10 @@ func GetAllAddress() ([]Address, error) {
 	getErr := Db.Unsafe().Select(&mods, "select * from address")
 
 	if getErr != nil {
-		fmt.Println("数据库Get 错误 => ", getErr)
+		fmt.Println("数据库Get All 错误 => ", getErr)
 	}
 
-	fmt.Println("数据库Get => ", &mods)
+	fmt.Println("数据库Get All => ", &mods)
 
 	return mods, getErr
 }
@@ -48,9 +43,15 @@ func GetAllAddress() ([]Address, error) {
 func DelAddress(id string) error {
 	db, err := Db.Unsafe().Exec("delete from address where id = ?", id)
 	if err != nil {
+		fmt.Println("删除出错", err)	
 		return err
 	}
-	fmt.Println("删除cheng", db)
+
+	if c, _ := db.RowsAffected(); c == 0 {
+		fmt.Println("根本没有这条数据出错", err)	
+		return  errors.New("根本没有这条数据")
+	}
+	
 	return err
 }
 
