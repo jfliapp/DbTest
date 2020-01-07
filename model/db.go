@@ -10,7 +10,7 @@ import (
 var Db *sqlx.DB
 
 func init() {
-	db, err := sqlx.Open(`mysql`, `root:@tcp(127.0.0.1:3306)/goTest?charset=utf8&parseTime=true`)
+	db, err := sqlx.Open(`mysql`, `root:@tcp(localhost:3306)/goTest?charset=utf8&parseTime=true`)
 
 	if err != nil {
 		fmt.Print(err.Error())
