@@ -15,6 +15,13 @@ func main() {
 	http.HandleFunc("/del", controller.ControllDelAddress) // 删除单个
 	http.HandleFunc("/update", controller.ControllUpdateAddress) // 修改单个
 	http.HandleFunc("/addAddress", controller.ControllPostAddress) // 添加
+	
+	
+	http.HandleFunc("/upload", controller.UploadImg) // 图片上传
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))) // 静态图片服务 显示
+
+
 	http.ListenAndServe(":8888", nil)
 
 	fmt.Print("主程序 main.go")
